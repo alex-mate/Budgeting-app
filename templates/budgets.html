@@ -1,0 +1,149 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Budget
+{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Set Up your Budget Limits by Category</h1>
+<p class="page-subtitle">
+    See your budget limit, edit it by month, or delete a limit.
+    View how much you have spent so far from your maximum budget per category.
+</p>
+
+{% if message %}
+<div class="alert {% if message_type == 'success' %}alert-success{% else %}alert-error{% endif %}">
+    {{ message }}
+</div>
+{% endif %}
+
+<div class="budget-page">
+
+    <!-- LEFT: Settings + Update Forms -->
+    <section class="budget-column">
+
+        <!-- Month / Year selector (GET) -->
+        <div class="budget-card">
+            <h2>Budget Settings</h2>
+            <p class="card-description">
+                View and adjust your budget limit.
+            </p>
+
+            <p class="total-budget">
+                Your current total budget for this month is:
+                <span class="highlight-amount">{{ money(total_budget) }}</span>
+            </p>
+
+            <form method="get" class="budget-period-form">
+                <div class="form-row">
+                    <div class="filter-group">
+                        <label for="month-select">Month</label>
+                        <select id="month-select" name="month">
+                            <option value="01" {% if month == '01' %}selected{% endif %}>January</option>
+                            <option value="02" {% if month == '02' %}selected{% endif %}>February</option>
+                            <option value="03" {% if month == '03' %}selected{% endif %}>March</option>
+                            <option value="04" {% if month == '04' %}selected{% endif %}>April</option>
+                            <option value="05" {% if month == '05' %}selected{% endif %}>May</option>
+                            <option value="06" {% if month == '06' %}selected{% endif %}>June</option>
+                            <option value="07" {% if month == '07' %}selected{% endif %}>July</option>
+                            <option value="08" {% if month == '08' %}selected{% endif %}>August</option>
+                            <option value="09" {% if month == '09' %}selected{% endif %}>September</option>
+                            <option value="10" {% if month == '10' %}selected{% endif %}>October</option>
+                            <option value="11" {% if month == '11' %}selected{% endif %}>November</option>
+                            <option value="12" {% if month == '12' %}selected{% endif %}>December</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="year-select">Year</label>
+                        <select id="year-select" name="year">
+                            {% for y in ['2023','2024','2025','2026','2027'] %}
+                                <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary small">Update Month and Year</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Update all budgets in one go (POST) -->
+        <form method="post" class="budget-card budget-update-all">
+            <input type="hidden" name="month" value="{{ month }}">
+            <input type="hidden" name="year" value="{{ year }}">
+
+            <h3>Update All Budgets in One Go</h3>
+            <p class="card-description">
+                Set the same budget amount for every category for the selected month.
+            </p>
+
+            <div class="form-row">
+                <input type="number" step="0.01" name="all_budget" placeholder="Enter new budget amount for all categories">
+                <button type="submit" name="update_all" value="1" class="btn-primary">Update All Budgets</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- RIGHT: Table with per-category budgets -->
+    <section class="budget-column">
+
+        <div class="budget-card">
+            <h2>Budgets by Category</h2>
+            <p class="card-description">
+                Current budget vs amount spent for {{ month }}/{{ year }}.
+            </p>
+
+            {% if no_data_message %}
+                <p class="no-data">{{ no_data_message }}</p>
+            {% endif %}
+
+            <form method="post" class="budget-table-wrapper">
+                <input type="hidden" name="month" value="{{ month }}">
+                <input type="hidden" name="year" value="{{ year }}">
+
+                <table class="budget-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Current Budget</th>
+                            <th>Spent</th>
+                            <th>Remaining</th>
+                            <th>Usage</th>
+                            <th>New Budget</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in budgets %}
+                        <tr>
+                            <td>{{ money(row.category) }}</td>
+                            <td>{{ money(row.budget) }}</td>
+                            <td>{{ money(row.spent) }}</td>
+                            <td>{{ money(row.remaining) }}</td>
+                            <td>
+                                <div class="progress-bar">
+                                   <div class="progress-fill" style="width: {{ row.percent_used }}%;"></div>
+
+                                </div>
+                                <span class="percent-label">{{ row.percent_used }}%</span>
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="amount_{{ row.category|lower }}" placeholder="New {{ row.category }} budget">
+                            </td>
+                            <td>
+                                <button type="submit" name="update_category" value="{{ row.category }}" class="btn-secondary small">Update</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

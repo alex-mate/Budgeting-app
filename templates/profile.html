@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block title %}Profile – Mate Budget{% endblock %}
+
+{% block content %}
+
+
+
+<h1 class="page-title">Profile & Settings</h1>
+<p class="page-subtitle">Manage your account, currency, budgets, and savings goals.</p>
+
+<div
+    id="profile-message"
+    class="profile-message {% if success_message or error_message %}show{% else %}hidden{% endif %} {% if success_message %}success{% elif error_message %}error{% endif %}"
+    data-success="{{ success_message|default('', true) }}"
+    data-error="{{ error_message|default('', true) }}"
+>
+    {% if success_message %}
+        {{ success_message }}
+    {% elif error_message %}
+        {{ error_message }}
+    {% endif %}
+</div>
+
+<div class="profile-grid">
+
+    <!-- Financial settings card -->
+    <section class="profile-card">
+        <h2>Financial Settings</h2>
+        <p class="card-description">View and adjust your main budgeting preferences.</p>
+
+        <!-- Currency -->
+        <form action="/profile/currency" method="post" class="profile-form">
+            <div class="form-row">
+                <label for="currency">Currency (current: {{ user['currency'] }})</label>
+                <select name="currency" id="currency">
+                    <option value="GBP" {% if user['currency'] == 'GBP' %}selected{% endif %}>GBP (£)</option>
+                    <option value="EUR" {% if user['currency'] == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                    <option value="USD" {% if user['currency'] == 'USD' %}selected{% endif %}>USD ($)</option>
+                    <option value="RON" {% if user['currency'] == 'RON' %}selected{% endif %}>RON    </option>
+                </select>
+            </div>
+            <button type="submit" class="btn-secondary">Update Currency</button>
+        </form>
+
+        <div class="settings-divider"></div>
+
+        <!-- Savings goal -->
+        <form action="/profile/goal" method="post" class="profile-form">
+            <div class="form-row">
+                <label for="savings_goal">Savings Goal (current: {{ user['savings_goal'] or 0 }})</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    name="savings_goal"
+                    id="savings_goal"
+                    placeholder="Enter new savings goal"
+                >
+            </div>
+            <button type="submit" class="btn-secondary">Update Savings Goal</button>
+        </form>
+
+        <div class="settings-divider"></div>
+
+        <!-- Monthly budget -->
+        <form action="/profile/budget" method="post" class="profile-form">
+            <div class="form-row">
+                <label for="monthly_budget">Monthly Budget (current: {{ user['monthly_budget'] or 0 }})</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    name="monthly_budget"
+                    id="monthly_budget"
+                    placeholder="Enter new monthly budget"
+                >
+            </div>
+            <button type="submit" class="btn-secondary">Update Monthly Budget</button>
+        </form>
+    </section>
+
+    <!-- Username change card -->
+    <section class="profile-card">
+        <h2>Change Username</h2>
+        <p class="card-description">Update the name used to log in and displayed in your dashboard.</p>
+
+        <form action="/profile/username" method="post" class="profile-form">
+            <div class="form-row">
+                <label>Current username</label>
+                <input type="text" value="{{ user['username'] }}" disabled>
+            </div>
+
+            <div class="form-row">
+                <label for="new_username">New username</label>
+                <input type="text" name="new_username" id="new_username" placeholder="Enter new username">
+            </div>
+
+            <button type="submit" class="btn-primary">Update Username</button>
+        </form>
+    </section>
+
+    <!-- Password change card -->
+    <section class="profile-card wide">
+        <h2>Change Password</h2>
+        <p class="card-description">Make sure your account stays secure with a strong password.</p>
+
+        <form action="/profile/password" method="post" class="profile-form three-cols">
+            <div class="form-row">
+                <label for="current_password">Current password</label>
+                <input type="password" name="current_password" id="current_password" required>
+            </div>
+
+            <div class="form-row">
+                <label for="new_password">New password</label>
+                <input type="password" name="new_password" id="new_password" required>
+            </div>
+
+            <div class="form-row">
+                <label for="confirm_password">Confirm new password</label>
+                <input type="password" name="confirm_password" id="confirm_password" required>
+            </div>
+
+            <button type="submit" class="btn-outline">Change Password</button>
+        </form>
+    </section>
+
+</div>
+
+
+
+{% endblock %}

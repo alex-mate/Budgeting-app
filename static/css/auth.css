@@ -1,0 +1,346 @@
+/* =========================================
+   COLOR PALETTE
+   ========================================= */
+
+:root {
+    --bg-main: #0B0B0D;
+    --bg-card: #111114;
+    --bg-soft: #1A1A1D;
+    --border-subtle: #2A2A2F;
+
+    --purple: #8A4FFF;
+    --purple-soft: #7B4AE2;
+    --purple-light: #A380FF;
+
+    --text-main: #FFFFFF;
+    --text-soft: #CFCFCF;
+    --text-muted: #8E8E8E;
+}
+
+/* =========================================
+   RESET
+   ========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: radial-gradient(circle at top left, #1A1A1D 0, #0B0B0D 45%, #050507 100%);
+    color: var(--text-main);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* =========================================
+   WRAPPER
+   ========================================= */
+
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+}
+
+/* =========================================
+   MAIN CONTAINER
+   ========================================= */
+
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 980px;
+    min-height: 520px;
+
+    background: rgba(11, 11, 13, 0.95);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
+
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    transition: 0.3s ease;
+}
+
+/* =========================================
+   FORMS SIDE
+   ========================================= */
+
+.forms-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signin-signup {
+    width: 100%;
+    max-width: 360px;
+    margin-left: 3rem;
+}
+
+/* Base style for both forms */
+.auth-form {
+    background: var(--bg-card);
+    border-radius: 18px;
+    padding: 2.4rem 2.3rem;
+    display: none;                 /* hidden by default */
+    flex-direction: column;
+    gap: 1rem;
+
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+
+    transform: translateX(30px);
+    transition: transform 0.3s ease;
+}
+
+/* Visible form */
+.auth-form.active {
+    display: flex;
+    transform: translateX(0);
+}
+
+/* When in sign-up-mode, we also add a subtle slide */
+.container.sign-up-mode .sign-in-form.active {
+    transform: translateX(-10px);
+}
+
+.container.sign-up-mode .sign-up-form.active {
+    transform: translateX(0);
+}
+
+/* =========================================
+   FORM TEXT
+   ========================================= */
+
+.title {
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+}
+
+.subtitle {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+/* =========================================
+   INPUT FIELDS
+   ========================================= */
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.input-group label {
+    font-size: 0.8rem;
+    color: var(--text-soft);
+}
+
+.input-field {
+    padding: 0.75rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-soft);
+    color: var(--text-main);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.input-field::placeholder {
+    color: var(--text-muted);
+}
+
+.input-field:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 1px rgba(138, 79, 255, 0.7);
+    background: #18181B;
+}
+
+/* =========================================
+   ERROR STATES
+   ========================================= */
+
+.input-group.has-error .input-field {
+    border-color: #FF4F6B !important;
+    box-shadow: 0 0 0 1px rgba(255, 79, 107, 0.6) !important;
+}
+
+.field-error {
+    margin-top: 0.25rem;
+    font-size: 0.78rem;
+    color: #FF8BA0;
+}
+
+.server-error {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    color: #FF8BA0;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
+.btn {
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    padding: 0.75rem 1.6rem;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+/* Solid purple button */
+.primary-btn {
+    margin-top: 0.7rem;
+    background: linear-gradient(135deg, var(--purple), var(--purple-soft));
+    color: var(--text-main);
+    box-shadow: 0 12px 30px rgba(138, 79, 255, 0.45);
+}
+
+.primary-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 40px rgba(138, 79, 255, 0.6);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Outline button */
+.ghost-btn {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: transparent;
+    color: #ffffff;
+    padding-inline: 1.8rem;
+}
+
+.ghost-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================
+   PANELS (RIGHT PURPLE / LEFT DARK)
+   ========================================= */
+
+.panels-container {
+    position: relative;
+    overflow: hidden;
+
+    background: radial-gradient(circle at top right,
+                                var(--purple),
+                                var(--purple-soft) 40%,
+                                #3D2B55 70%,
+                                #1A1A1D 100%);
+}
+
+.panel {
+    position: absolute;
+    inset: 0;
+    padding: 2.8rem 2.4rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+.panel .content {
+    max-width: 320px;
+    color: #F6F3FF;
+}
+
+.panel h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+.panel p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.4rem;
+    color: #E3DAFF;
+}
+
+/* Visible by default */
+.left-panel {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Hidden by default */
+.right-panel {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+/* Swap when in register mode */
+.container.sign-up-mode .left-panel {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.container.sign-up-mode .right-panel {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+    .container {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        min-height: 560px;
+    }
+
+    .forms-container {
+        order: 2;
+    }
+
+    .signin-signup {
+        margin-left: 0;
+        padding: 1.2rem;
+        max-width: 100%;
+    }
+
+    .auth-form {
+        width: 100%;
+    }
+
+    .panels-container {
+        position: relative;
+        min-height: 190px;
+    }
+
+    .panel {
+        position: absolute;
+        inset: 0;
+        justify-content: center;
+        text-align: center;
+    }
+}

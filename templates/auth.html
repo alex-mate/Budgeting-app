@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mate Budget • Auth</title>
+
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth page CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+
+<div class="auth-wrapper">
+    <!-- Start in sign-up-mode ONLY when there's a register error -->
+    <div class="container {% if register_error %}sign-up-mode{% endif %}">
+
+        <!-- FORMS SIDE -->
+        <div class="forms-container">
+            <div class="signin-signup">
+
+                <!-- LOGIN FORM -->
+                <form id="login-form"
+                      class="auth-form sign-in-form {% if not register_error %}active{% endif %}"
+                      method="post"
+                      action="/login"
+                      novalidate>
+                    <h2 class="title">Welcome back</h2>
+                    <p class="subtitle">Log in to see your dashboard.</p>
+
+                    <div class="input-group">
+                        <label for="login-username">Username</label>
+                        <input id="login-username"
+                               type="text"
+                               name="username"
+                               placeholder="Enter your username"
+                               class="input-field">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="login-password">Password</label>
+                        <input id="login-password"
+                               type="password"
+                               name="password"
+                               placeholder="Enter your password"
+                               class="input-field">
+                    </div>
+
+                    {% if login_error %}
+                        <p class="server-error">{{ login_error }}</p>
+                    {% endif %}
+
+                    <button type="submit" class="btn primary-btn">Login</button>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="register-form"
+                      class="auth-form sign-up-form {% if register_error %}active{% endif %}"
+                      method="post"
+                      action="/register"
+                      novalidate>
+                    <h2 class="title">Create account</h2>
+                    <p class="subtitle">Start tracking your budget today.</p>
+
+                    <div class="input-group">
+                        <label for="reg-username">Username</label>
+                        <input id="reg-username"
+                               type="text"
+                               name="username"
+                               placeholder="Choose a username"
+                               class="input-field">
+                    </div>
+
+                    
+                    <div class="input-group">
+                        <label for="reg-password">Password</label>
+                        <input id="reg-password"
+                               type="password"
+                               name="password"
+                               placeholder="Create a password"
+                               class="input-field">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="reg-confirm">Confirm password</label>
+                        <input id="reg-confirm"
+                               type="password"
+                               name="confirm"
+                               placeholder="Repeat your password"
+                               class="input-field">
+                    </div>
+
+                    {% if register_error %}
+                        <p class="server-error">{{ register_error }}</p>
+                    {% endif %}
+
+                    <button type="submit" class="btn primary-btn">Register</button>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- PANELS SIDE -->
+        <div class="panels-container">
+
+            <!-- LEFT PANEL (login mode) -->
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>New to Mate Budget?</h3>
+                    <p>Set goals, track spending and see where your money really goes.</p>
+                    <button type="button" class="btn ghost-btn" id="sign-up-btn">
+                        Create an account
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL (register mode) -->
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>Already have an account?</h3>
+                    <p>Sign in to continue where you left off and stay on top of your finances.</p>
+                    <button type="button" class="btn ghost-btn" id="sign-in-btn">
+                        Back to login
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Auth JS (toggle + validation) -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

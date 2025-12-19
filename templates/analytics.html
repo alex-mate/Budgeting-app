@@ -1,0 +1,244 @@
+{% extends "layout.html" %}
+
+{% block title %}Analytics{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Analytics</h1>
+<p class="page-subtitle">
+  Track your saving progress, monthly spending breakdown, yearly overview, and compare two months.
+</p>
+
+<div class="analytics-grid">
+
+  <!-- SAVINGS PROGRESS -->
+  <div class="a-card">
+    <div class="a-card-head">
+      <h2>Savings Progress</h2>
+      <p>Total savings vs your saving goal.</p>
+    </div>
+
+    <div class="a-metric">
+      <div>
+        <div class="a-label">Total Saved</div>
+        <div class="a-value">{{ money(total_savings) }}</div>
+      </div>
+
+      <div>
+        <div class="a-label">Goal</div>
+        <div class="a-value">
+          {% if savings_goal %}
+            {{ money(savings_goal) }}
+          {% else %}
+            Not set
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar-lg">
+        <div class="progress-fill-lg" style="width: {{ savings_progress_clamped }}%;"></div>
+      </div>
+      <div class="progress-text">
+        {% if savings_progress is not none %}
+          {{ savings_progress }}%
+        {% else %}
+          Set a savings goal in Profile
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="analytics-grid">
+
+  <!-- MONTHLY SPENDING PIE -->
+  <div class="a-card">
+    <div class="a-card-head">
+      <h2>Monthly Spending</h2>
+      <p>Spending by category for the selected month.</p>
+    </div>
+
+    <form class="a-filters" method="get" action="/analytics">
+      <div class="filter-group">
+        <label>Month</label>
+        <select name="month">
+          {% for val, lab in months_for_select %}
+            <option value="{{ val }}" {% if month == val %}selected{% endif %}>{{ lab }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Year</label>
+        <select name="year">
+          {% for y in years_for_select %}
+            <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button class="btn-primary small" type="submit">Update</button>
+    </form>
+
+    <div class="chart-wrap">
+      <canvas id="monthlyPie"></canvas>
+      <div class="no-chart" id="monthlyPieEmpty">No expense data for this month.</div>
+    </div>
+
+    <div class="top-merchant">
+      <h3>Top 3 Merchants ({{ month_label }} {{ year }})</h3>
+      {% if top_merchants and top_merchants|length > 0 %}
+        <ul>
+          {% for m in top_merchants %}
+            <li><span>{{ m.merchant }}</span><span>{{ money(m.total) }}</span></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted">No merchant data available.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- YEARLY OVERVIEW -->
+  <div class="a-card wide">
+    <div class="a-card-head">
+      <h2>Yearly Overview</h2>
+      <p>Income, expenses and savings by month for {{ year }}.</p>
+    </div>
+
+    <div class="chart-wrap wide-chart">
+      <canvas id="yearlyLine"></canvas>
+      <div class="no-chart" id="yearlyLineEmpty">No transactions found for this year.</div>
+    </div>
+  </div>
+
+  <!-- 2 MONTH COMPARISON -->
+  <div class="a-card wide">
+    <div class="a-card-head">
+      <h2>Compare Two Months</h2>
+      <p>Compare totals and category spending. See % up/down from Month 1 → Month 2.</p>
+    </div>
+
+    <form class="a-filters" method="get" action="/analytics">
+      <!-- keep main month/year selection in URL if you want -->
+      <input type="hidden" name="month" value="{{ month }}">
+      <input type="hidden" name="year" value="{{ year }}">
+
+      <div class="filter-group">
+        <label>Year</label>
+        <select name="c_year">
+          {% for y in years_for_select %}
+            <option value="{{ y }}" {% if c_year == y %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Month 1</label>
+        <select name="c_month1">
+          {% for val, lab in months_for_select %}
+            <option value="{{ val }}" {% if c_month1 == val %}selected{% endif %}>{{ lab }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Month 2</label>
+        <select name="c_month2">
+          {% for val, lab in months_for_select %}
+            <option value="{{ val }}" {% if c_month2 == val %}selected{% endif %}>{{ lab }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button class="btn-primary small" type="submit">Compare</button>
+    </form>
+
+    <div class="compare-grid">
+      <div class="chart-wrap">
+        <canvas id="compareBar"></canvas>
+      </div>
+
+      <div class="compare-totals">
+        <div class="ct-row">
+          <div class="ct-label">Income</div>
+          <div class="ct-values">
+            <span>{{ money(compare_totals.month1.income) }}</span>
+            <span>→</span>
+            <span>{{ money(compare_totals.month2.income) }}</span>
+          </div>
+          <div class="ct-pct {% if compare_totals.pct.income >= 0 %}up{% else %}down{% endif %}">
+            {{ compare_totals.pct.income }}%
+          </div>
+        </div>
+
+        <div class="ct-row">
+          <div class="ct-label">Expenses</div>
+          <div class="ct-values">
+            <span>{{ money(compare_totals.month1.expense) }}</span>
+            <span>→</span>
+            <span>{{ money(compare_totals.month2.expense) }}</span>
+          </div>
+          <div class="ct-pct {% if compare_totals.pct.expense >= 0 %}up{% else %}down{% endif %}">
+            {{ compare_totals.pct.expense }}%
+          </div>
+        </div>
+
+        <div class="ct-row">
+          <div class="ct-label">Savings</div>
+          <div class="ct-values">
+            <span>{{ money(compare_totals.month1.savings) }}</span>
+            <span>→</span>
+            <span>{{ money(compare_totals.month2.savings) }}</span>
+          </div>
+          <div class="ct-pct {% if compare_totals.pct.savings >= 0 %}up{% else %}down{% endif %}">
+            {{ compare_totals.pct.savings }}%
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-compare">
+      <h3>Category Comparison (Expenses)</h3>
+      <table class="a-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Month 1</th>
+            <th>Month 2</th>
+            <th>% Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if category_compare and category_compare|length > 0 %}
+            {% for r in category_compare %}
+              <tr>
+                <td>{{ r.category }}</td>
+                <td>{{ money(r.month1) }}</td>
+                <td>{{ money(r.month2) }}</td>
+                <td class="{% if r.pct >= 0 %}up{% else %}down{% endif %}">
+                  {{ r.pct }}%
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td colspan="4" class="muted">No category data to compare.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Data for JS -->
+<script>
+  const monthlyCategoryData = {{ monthly_category_data | default({"labels": [], "values": []}) | tojson }};
+  const yearlyOverviewData  = {{ yearly_overview_data  | default({"labels": [], "income": [], "expenses": [], "savings": []}) | tojson }};
+  const compareData         = {{ compare_data         | default({}) | tojson }};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}

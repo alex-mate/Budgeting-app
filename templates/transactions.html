@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Transactions
+{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Your Transactions</h1>
+<p class="page-subtitle">
+    View and filter all your expenses, income and savings. Use the filters to narrow down by month, year or merchant.
+</p>
+
+
+{% if success_message %}
+<div class="alert alert-success">
+    {{ success_message }}
+</div>
+{% endif %}
+
+{% if error_message %}
+<div class="alert alert-error">
+    {{ error_message }}
+</div>
+{% endif %}
+
+<div class="transactions-page">
+
+    <!-- FILTERS + SUMMARY -->
+    <section class="transactions-filters-card">
+        <form method="get" class="transactions-filters">
+
+            <div class="filter-group">
+                <label for="month-select">Month</label>
+                <select id="month-select" name="month">
+                    <option value="">All</option>
+                    {% for value, label in months %}
+                        <option value="{{ value }}" {% if month == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="year-select">Year</label>
+                <select id="year-select" name="year">
+                    {% for y in years %}
+                        <option value="{{ y }}" {% if year == y %}selected{% endif %}>
+                            {{ y }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group wide">
+                <label for="merchant-search">Merchant</label>
+                <input type="text"
+                       id="merchant-search"
+                       name="merchant"
+                       placeholder="Search merchant..."
+                       value="{{ merchant_search or '' }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="sort-by">Sort by</label>
+                <select id="sort-by" name="sort_by">
+                    <option value="newest"      {% if sort_by == 'newest' %}selected{% endif %}>Newest first</option>
+                    <option value="oldest"      {% if sort_by == 'oldest' %}selected{% endif %}>Oldest first</option>
+                    <option value="amount_desc" {% if sort_by == 'amount_desc' %}selected{% endif %}>Amount (high → low)</option>
+                    <option value="amount_asc"  {% if sort_by == 'amount_asc' %}selected{% endif %}>Amount (low → high)</option>
+                    <option value="merchant"    {% if sort_by == 'merchant' %}selected{% endif %}>Merchant A–Z</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-primary small">
+                Apply Filters
+            </button>
+        </form>
+
+        <!-- SUMMARY CARDS -->
+        <div class="transactions-summary">
+            <div class="summary-card">
+                <p class="label">Expenses</p>
+                <p class="value negative">-{{ money(total_expenses) }}</p>
+            </div>
+            <div class="summary-card">
+                <p class="label">Income</p>
+                <p class="value positive">+{{ money(total_income) }}</p>
+            </div>
+            <div class="summary-card">
+                <p class="label">Savings</p>
+                <p class="value savings">{{ money(total_savings) }}</p>
+            </div>
+            <div class="summary-card">
+                <p class="label">Net</p>
+                <p class="value {% if net < 0 %}negative{% else %}positive{% endif %}">
+                    {{ money(net) }}
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRANSACTIONS TABLE -->
+    <section class="transactions-table-card">
+        <h2>Transactions History</h2>
+        <p class="card-description">
+            Showing results for
+            {% if month_label %}{{ month_label }}{% else %}all months{% endif %}
+            {{ year }}{% if merchant_search %}, merchant contains "{{ merchant_search }}"{% endif %}.
+        </p>
+
+        {% if transactions|length == 0 %}
+            <p class="no-data">No transactions found for the current filters.</p>
+        {% else %}
+            <div class="transactions-table-wrapper">
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Merchant</th>
+                            <th>Amount</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td>{{ t.date }}</td>
+                            <td>
+                                <span class="type-pill type-{{ t.type }}">
+                                    {{ t.type|capitalize }}
+                                </span>
+                            </td>
+                            <td>{{ t.category or '-' }}</td>
+                            <td>{{ t.merchant or '-' }}</td>
+                            <td>
+                                {% if t.type == 'expense' %}
+                                    -{{ money(t.amount) }}
+                                {% elif t.type == 'income' %}
+                                    +{{ money(t.amount) }}
+                                {% else %}
+                                    {{ money(t.amount) }}
+                                {% endif %}
+                            </td>
+                            <td>{{ t.notes or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </section>
+
+</div>
+
+{% endblock %}
