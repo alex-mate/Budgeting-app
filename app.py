@@ -23,7 +23,7 @@ def exe_dir():
     return os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
 
 DB_PATH = os.path.join(exe_dir(), "budget.db")
-db = SQL(f"sqlite:///{DB_PATH}")
+db = SQL(f"sqlite:///{"dist/budget.db"}")
 
 
 # -------------------------
