@@ -3,6 +3,7 @@ from flask_session import Session
 from cs50 import SQL
 from werkzeug.security import check_password_hash, generate_password_hash
 import os,sys
+from pathlib import Path
 
 from datetime import datetime
 from helper import login_required, clean_text, clean_title, money, get_currency_symbol
@@ -22,8 +23,8 @@ CATEGORIES = ["Food", "Shopping", "Transport", "Bills",
 def exe_dir():
     return os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
 
-DB_PATH = os.path.join(exe_dir(), "budget.db")
-db = SQL(f"sqlite:///{"dist/budget.db"}")
+DB_PATH = Path(exe_dir()) / "budget.db"
+db = SQL(f"sqlite:///{DB_PATH.as_posix()}")
 
 
 # -------------------------
@@ -355,7 +356,7 @@ def analytics():
         ("07", "July"), ("08", "August"), ("09", "September"),
         ("10", "October"), ("11", "November"), ("12", "December"),
     ]
-    years_for_select = ["2023", "2024", "2025", "2026", "2027"]
+    years_for_select = ["2026", "2027", "2028", "2029", "2030"]
 
     # --------- main month/year (monthly pie) ----------
     month = request.args.get("month") or datetime.now().strftime("%m")
@@ -739,7 +740,7 @@ def transactions():
         ("11", "November"),
         ("12", "December"),
     ]
-    years = ["2023", "2024", "2025", "2026", "2027"]
+    years = ["2026", "2027", "2028", "2029", "2030"]
 
     base_query = """
         SELECT id, type, category, merchant, amount, date, notes

@@ -1,5 +1,5 @@
-('C:\\Users\\rdsal\\Desktop\\Cursuri\\Harvard CS50\\Final '
- 'Project\\build\\run_app\\PYZ-00.pyz',
+('C:\\Users\\rdsal\\Desktop\\Projects\\Budgeting App '
+ 'v1.0\\Budgeting-app\\build\\MateBudgeting\\PYZ-00.pyz',
  [('__future__',
    'C:\\Users\\rdsal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\__future__.py',
    'PYMODULE'),
@@ -124,7 +124,8 @@
    'C:\\Users\\rdsal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\annotationlib.py',
    'PYMODULE'),
   ('app',
-   'C:\\Users\\rdsal\\Desktop\\Cursuri\\Harvard CS50\\Final Project\\app.py',
+   'C:\\Users\\rdsal\\Desktop\\Projects\\Budgeting App '
+   'v1.0\\Budgeting-app\\app.py',
    'PYMODULE'),
   ('argparse',
    'C:\\Users\\rdsal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\argparse.py',
@@ -683,7 +684,8 @@
    'C:\\Users\\rdsal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\hashlib.py',
    'PYMODULE'),
   ('helper',
-   'C:\\Users\\rdsal\\Desktop\\Cursuri\\Harvard CS50\\Final Project\\helper.py',
+   'C:\\Users\\rdsal\\Desktop\\Projects\\Budgeting App '
+   'v1.0\\Budgeting-app\\helper.py',
    'PYMODULE'),
   ('hmac',
    'C:\\Users\\rdsal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\hmac.py',
